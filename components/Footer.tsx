@@ -18,10 +18,13 @@ export default function Footer() {
                         <Link href="/projects" className="uppercase font-bold text-sm tracking-wide hover:text-white/70 transition-colors">
                             PROJECTS
                         </Link>
+                        <Link href="#contact" className="uppercase font-bold text-sm tracking-wide hover:text-white/70 transition-colors">
+                            CONTACT ME
+                        </Link>
                     </div>
 
                     {/* Contact Info */}
-                    <div className="text-sm space-y-1 text-right">
+                    <div id="contact" className="text-sm space-y-1 text-right">
                         <p className="uppercase font-bold text-sm tracking-wide mb-2">CONTACT ME</p>
                         <p>MAIL: timjonkergouw@home.nl</p>
                         <p>PHONE: 0622350586</p>
@@ -37,7 +40,7 @@ export default function Footer() {
                         className="hover:opacity-70 transition-opacity"
                         aria-label="Instagram"
                     >
-                        <Instagram size={24} />
+                        <Instagram size={32} />
                     </a>
                     <a
                         href="https://facebook.com"
@@ -46,7 +49,7 @@ export default function Footer() {
                         className="hover:opacity-70 transition-opacity"
                         aria-label="Facebook"
                     >
-                        <Facebook size={24} />
+                        <Facebook size={32} />
                     </a>
                 </div>
             </div>
