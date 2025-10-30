@@ -5,6 +5,7 @@ import TiltImage from "@/components/TiltImage";
 import RevealOnScroll from "@/components/RevealOnScroll";
 import FadeInOnLoad from "@/components/FadeInOnLoad";
 import Footer from "@/components/Footer";
+import InlineCarousel from "@/components/InlineCarousel";
 
 export default function AboutPage() {
     return (
@@ -60,6 +61,20 @@ export default function AboutPage() {
                                 I play in the Under-23 first team. In my free time, I enjoy going out for drinks and spending time with friends.
                                 I also like gaming and playing darts.
                             </p>
+                            <div className="mt-6">
+                                <InlineCarousel
+                                    images={[
+                                        { src: "/voetbal.jpg", alt: "Voetbal" },
+                                        { src: "/180.jpg", alt: "180" },
+                                        { src: "/festival.jpg", alt: "Festival" },
+                                        { src: "/tenerife.jpg", alt: "Tenerife" },
+                                        { src: "/trainer.jpg", alt: "Trainer" },
+                                        { src: "/propodeuse mannen.jpg", alt: "Propodeuse mannen" },
+                                    ]}
+                                    visible={6}
+                                    heightPx={200}
+                                />
+                            </div>
                         </section>
                     </RevealOnScroll>
 
@@ -72,6 +87,20 @@ export default function AboutPage() {
                                 I chose this program because I have always been interested in working with computers and experimenting with programs such as Photoshop and Sony Vegas.
                                 Through this, I discovered that I really enjoy the creative side of things. So, in the second semester, I decided to focus on Media Design, and in the third semester, I started working on Front-End Development to learn more about coding. In the fourth semester, I moved on to Media Creation in Eindhoven, because I have always enjoyed being creative.
                             </p>
+                            <div className="mt-6 ml-auto max-w-7xl">
+                                <InlineCarousel
+                                    images={[
+                                        { src: "/diploma.jpg", alt: "Diploma" },
+                                        { src: "/propodeuse.jpg", alt: "Propedeuse" },
+                                        { src: "/schoolfoto.jpg", alt: "Schoolfoto" },
+                                        { src: "/pc build.jpg", alt: "PC build" },
+                                        { src: "/fiori animatie loop.gif", alt: "Fiori animatie loop" },
+                                        { src: "/schoolfoto.jpg", alt: "Schoolfoto" },
+                                    ]}
+                                    visible={6}
+                                    heightPx={200}
+                                />
+                            </div>
                         </section>
                     </RevealOnScroll>
 
@@ -86,6 +115,19 @@ export default function AboutPage() {
                                 I can usually find the solutions I need by effectively using AI tools and resources.
                                 I enjoy combining design and technology to create user-friendly and visually appealing digital experiences.
                             </p>
+                            <div className="mt-6">
+                                <InlineCarousel
+                                    images={[
+                                        { src: "/fiori blender 3.png", alt: "Fiori Blender 3" },
+                                        { src: "/illustrator.png", alt: "Illustrator" },
+                                        { src: "/landen ql.png", alt: "Landen QL" },
+                                        { src: "/photoshop.png", alt: "Photoshop" },
+                                        { src: "/cursor ss.png", alt: "Cursor screenshot" },
+                                    ]}
+                                    visible={4}
+                                    heightPx={160}
+                                />
+                            </div>
                         </section>
                     </RevealOnScroll>
                 </div>

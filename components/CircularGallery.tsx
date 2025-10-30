@@ -103,9 +103,10 @@ class Title {
 
 class Media {
     extra = 0;
-    geometry: any; gl: any; image: string; index: number; length: number; renderer: any; scene: any; screen: any; text: string; viewport: any; bend: number; textColor: string; borderRadius: number; font: string;
+    geometry: any; gl: any; image: string; index: number; length: number; renderer: any; scene: any; screen: any; text: string; href?: string; viewport: any; bend: number; textColor: string; borderRadius: number; font: string;
     program!: any; plane!: any; title!: any; scale!: number; padding!: number; width!: number; widthTotal!: number; x!: number; speed!: number; isBefore!: boolean; isAfter!: boolean;
-    constructor({ geometry, gl, image, index, length, renderer, scene, screen, text, viewport, bend, textColor, borderRadius = 0, font }: any) {
+    baseScaleX!: number; baseScaleY!: number; currentScale!: number; targetScale!: number; activeScale!: number;
+    constructor({ geometry, gl, image, index, length, renderer, scene, screen, text, href, viewport, bend, textColor, borderRadius = 0, font, activeScale = 1.15 }: any) {
         this.geometry = geometry;
         this.gl = gl;
         this.image = image;
@@ -115,11 +116,15 @@ class Media {
         this.scene = scene;
         this.screen = screen;
         this.text = text;
+        this.href = href;
         this.viewport = viewport;
         this.bend = bend;
         this.textColor = textColor;
         this.borderRadius = borderRadius;
         this.font = font;
+        this.activeScale = activeScale;
+        this.currentScale = 1;
+        this.targetScale = 1;
         this.createShader();
         this.createMesh();
         this.createTitle();
@@ -219,6 +224,19 @@ class Media {
                 this.plane.rotation.z = Math.sign(x) * Math.asin(effectiveX / R);
             }
         }
+        // Smooth scale based on proximity to center
+        const proximity = Math.max(0, Math.min(1, 1 - Math.abs(this.plane.position.x) / (this.baseScaleX || this.plane.scale.x)));
+        const desired = 1 + (this.activeScale - 1) * (proximity * proximity);
+        this.targetScale = desired;
+        // lerp towards target scale (slightly faster for clearer effect)
+        this.currentScale = lerp(this.currentScale, this.targetScale, 0.25);
+        const sx = (this.baseScaleX || this.plane.scale.x) * this.currentScale;
+        const sy = (this.baseScaleY || this.plane.scale.y) * this.currentScale;
+        this.plane.scale.x = sx;
+        this.plane.scale.y = sy;
+        if (this.plane.program.uniforms.uPlaneSizes) {
+            this.plane.program.uniforms.uPlaneSizes.value = [sx, sy];
+        }
         this.speed = scroll.current - scroll.last;
         const planeOffset = this.plane.scale.x / 2;
         const viewportOffset = this.viewport.width / 2;
@@ -244,6 +262,10 @@ class Media {
         this.scale = this.screen.height / 1500;
         this.plane.scale.y = (this.viewport.height * (900 * this.scale)) / this.screen.height;
         this.plane.scale.x = (this.viewport.width * (700 * this.scale)) / this.screen.width;
+        this.baseScaleX = this.plane.scale.x;
+        this.baseScaleY = this.plane.scale.y;
+        this.currentScale = 1;
+        this.targetScale = 1;
         this.plane.program.uniforms.uPlaneSizes.value = [this.plane.scale.x, this.plane.scale.y];
         this.padding = 2;
         this.width = this.plane.scale.x + this.padding;
@@ -253,9 +275,9 @@ class Media {
 }
 
 class App {
-    container!: HTMLElement; renderer!: any; gl!: any; camera!: any; scene!: any; planeGeometry!: any; mediasImages!: any[]; medias!: any[]; screen!: any; viewport!: any; scroll!: any; onCheckDebounce!: any; raf: number | undefined; isDown!: boolean; start!: number; scrollSpeed!: number;
-    boundOnResize!: () => void; boundOnWheel!: (e: any) => void; boundOnTouchDown!: (e: any) => void; boundOnTouchMove!: (e: any) => void; boundOnTouchUp!: () => void;
-    constructor(container: HTMLElement, { items, bend, textColor = '#ffffff', borderRadius = 0, font = 'bold 30px Figtree', scrollSpeed = 2, scrollEase = 0.05 }: any = {}) {
+    container!: HTMLElement; renderer!: any; gl!: any; camera!: any; scene!: any; planeGeometry!: any; mediasImages!: any[]; medias!: any[]; screen!: any; viewport!: any; scroll!: any; onCheckDebounce!: any; raf: number | undefined; isDown!: boolean; start!: number; lastPointerX!: number; scrollSpeed!: number; didDrag!: boolean; suppressClick!: boolean;
+    boundOnResize!: () => void; boundOnWheel!: (e: any) => void; boundOnPointerDown!: (e: any) => void; boundOnPointerMove!: (e: any) => void; boundOnPointerUp!: (e: any) => void; boundOnClick!: (e: any) => void;
+    constructor(container: HTMLElement, { items, bend, textColor = '#ffffff', borderRadius = 0, font = 'bold 30px Figtree', scrollSpeed = 2, scrollEase = 0.05, activeScale = 1.15 }: any = {}) {
         document.documentElement.classList.remove('no-js');
         this.container = container;
         this.scrollSpeed = scrollSpeed;
@@ -266,7 +288,7 @@ class App {
         this.createScene();
         this.onResize();
         this.createGeometry();
-        this.createMedias(items, bend, textColor, borderRadius, font);
+        this.createMedias(items, bend, textColor, borderRadius, font, activeScale);
         this.update();
         this.addEventListeners();
     }
@@ -279,7 +301,7 @@ class App {
     createCamera() { this.camera = new Camera(this.gl); this.camera.fov = 45; this.camera.position.z = 20; }
     createScene() { this.scene = new Transform(); }
     createGeometry() { this.planeGeometry = new Plane(this.gl, { heightSegments: 50, widthSegments: 100 }); }
-    createMedias(items: any[], bend = 1, textColor: string, borderRadius: number, font: string) {
+    createMedias(items: any[], bend = 1, textColor: string, borderRadius: number, font: string, activeScale: number) {
         const defaultItems = [
             { image: `https://picsum.photos/seed/1/800/600?grayscale`, text: 'Bridge' },
             { image: `https://picsum.photos/seed/2/800/600?grayscale`, text: 'Desk Setup' },
@@ -294,7 +316,7 @@ class App {
             { image: `https://picsum.photos/seed/21/800/600?grayscale`, text: 'Coastline' },
             { image: `https://picsum.photos/seed/12/800/600?grayscale`, text: 'Palm Trees' }
         ];
-        const normalized = (items && items.length ? items : defaultItems).map((it: any) => ({ image: it.image || it.src, text: it.text || it.title }));
+        const normalized = (items && items.length ? items : defaultItems).map((it: any) => ({ image: it.image || it.src, text: it.text || it.title, href: it.href }));
         this.mediasImages = normalized.concat(normalized);
         this.medias = this.mediasImages.map((data: any, index: number) => new Media({
             geometry: this.planeGeometry,
@@ -306,16 +328,57 @@ class App {
             scene: this.scene,
             screen: this.screen,
             text: data.text,
+            href: data.href,
             viewport: this.viewport,
             bend,
             textColor,
             borderRadius,
-            font
+            font,
+            activeScale
         }));
     }
-    onTouchDown(e: any) { this.isDown = true; (this as any).scroll.position = this.scroll.current; this.start = e.touches ? e.touches[0].clientX : e.clientX; }
-    onTouchMove(e: any) { if (!this.isDown) return; const x = e.touches ? e.touches[0].clientX : e.clientX; const distance = (this.start - x) * (this.scrollSpeed * 0.025); this.scroll.target = this.scroll.position + distance; }
-    onTouchUp() { this.isDown = false; this.onCheck(); }
+    onPointerDown(e: PointerEvent) {
+        this.isDown = true; this.didDrag = false; this.suppressClick = false; (this as any).scroll.position = this.scroll.current; this.start = e.clientX; this.lastPointerX = this.start; try { (e.target as Element).setPointerCapture?.(e.pointerId); } catch { }
+    }
+    onPointerMove(e: PointerEvent) { if (!this.isDown) return; const x = e.clientX; this.lastPointerX = x; const deltaPx = Math.abs(this.start - x); if (deltaPx > 6) this.didDrag = true; const distance = (this.start - x) * (this.scrollSpeed * 0.025); this.scroll.target = this.scroll.position + distance; }
+    onPointerUp(e: PointerEvent) {
+        if (!this.isDown) return;
+        this.isDown = false;
+        const dragDistance = Math.abs(this.start - this.lastPointerX);
+        if (dragDistance < 6) {
+            const target = this.getCenteredMedia();
+            if (target && target.href) { this.suppressClick = true; window.location.href = target.href; return; }
+        } else {
+            this.suppressClick = true; // prevent subsequent click after a drag
+        }
+        this.onCheck();
+    }
+    onClick(e: any) {
+        if (this.suppressClick) { this.suppressClick = false; return; }
+        const target = this.getCenteredMedia();
+        if (target && target.href) { e.preventDefault(); window.location.href = target.href; }
+    }
+    getCenteredMedia() {
+        if (!this.medias || !this.medias.length) return null;
+        let best: any = null; let bestAbs = Infinity;
+        for (const m of this.medias) {
+            const ax = Math.abs(m.plane.position.x);
+            if (ax < bestAbs) { bestAbs = ax; best = m; }
+        }
+        return best;
+    }
+    getMediaAtClientX(clientX: number) {
+        if (!this.medias || !this.medias.length) return null;
+        const rect = this.container.getBoundingClientRect();
+        const relX = clientX - rect.left;
+        const worldX = ((relX / rect.width) - 0.5) * this.viewport.width;
+        let best: any = null; let bestAbs = Infinity;
+        for (const m of this.medias) {
+            const dx = Math.abs(m.plane.position.x - worldX);
+            if (dx < bestAbs) { bestAbs = dx; best = m; }
+        }
+        return best;
+    }
     onWheel(e: any) { const delta = e.deltaY || e.wheelDelta || e.detail; this.scroll.target += (delta > 0 ? this.scrollSpeed : -this.scrollSpeed) * 0.2; this.onCheckDebounce(); }
     onCheck() {
         if (!this.medias || !this.medias[0]) return;
@@ -345,33 +408,32 @@ class App {
     addEventListeners() {
         this.boundOnResize = this.onResize.bind(this);
         this.boundOnWheel = this.onWheel.bind(this);
-        this.boundOnTouchDown = this.onTouchDown.bind(this);
-        this.boundOnTouchMove = this.onTouchMove.bind(this);
-        this.boundOnTouchUp = this.onTouchUp.bind(this);
+        this.boundOnPointerDown = this.onPointerDown.bind(this);
+        this.boundOnPointerMove = this.onPointerMove.bind(this);
+        this.boundOnPointerUp = this.onPointerUp.bind(this);
+        this.boundOnClick = this.onClick.bind(this);
         window.addEventListener('resize', this.boundOnResize);
         window.addEventListener('mousewheel', this.boundOnWheel as any);
         window.addEventListener('wheel', this.boundOnWheel as any);
-        window.addEventListener('mousedown', this.boundOnTouchDown as any);
-        window.addEventListener('mousemove', this.boundOnTouchMove as any);
-        window.addEventListener('mouseup', this.boundOnTouchUp as any);
-        window.addEventListener('touchstart', this.boundOnTouchDown as any);
-        window.addEventListener('touchmove', this.boundOnTouchMove as any);
-        window.addEventListener('touchend', this.boundOnTouchUp as any);
+        this.container.addEventListener('pointerdown', this.boundOnPointerDown as any);
+        this.container.addEventListener('pointermove', this.boundOnPointerMove as any);
+        this.container.addEventListener('pointerup', this.boundOnPointerUp as any);
+        this.container.addEventListener('pointercancel', this.boundOnPointerUp as any);
+        this.container.addEventListener('click', this.boundOnClick as any);
     }
     destroy() {
         if (this.raf) window.cancelAnimationFrame(this.raf);
         window.removeEventListener('resize', (this as any).boundOnResize);
         window.removeEventListener('mousewheel', (this as any).boundOnWheel);
         window.removeEventListener('wheel', (this as any).boundOnWheel);
-        window.removeEventListener('mousedown', (this as any).boundOnTouchDown);
-        window.removeEventListener('mousemove', (this as any).boundOnTouchMove);
-        window.removeEventListener('mouseup', (this as any).boundOnTouchUp);
-        window.removeEventListener('touchstart', (this as any).boundOnTouchDown);
-        window.removeEventListener('touchmove', (this as any).boundOnTouchMove);
-        window.removeEventListener('touchend', (this as any).boundOnTouchUp);
+        this.container.removeEventListener('pointerdown', (this as any).boundOnPointerDown);
+        this.container.removeEventListener('pointermove', (this as any).boundOnPointerMove);
+        this.container.removeEventListener('pointerup', (this as any).boundOnPointerUp);
+        this.container.removeEventListener('pointercancel', (this as any).boundOnPointerUp);
         if (this.renderer && this.renderer.gl && this.renderer.gl.canvas.parentNode) {
             this.renderer.gl.canvas.parentNode.removeChild(this.renderer.gl.canvas);
         }
+        this.container.removeEventListener('click', (this as any).boundOnClick);
     }
 }
 
@@ -382,14 +444,15 @@ export default function CircularGallery({
     borderRadius = 0.05,
     font = 'bold 30px Figtree',
     scrollSpeed = 2,
-    scrollEase = 0.05
+    scrollEase = 0.05,
+    activeScale = 1.15
 }: any) {
     const containerRef = useRef<HTMLDivElement | null>(null);
     useEffect(() => {
         if (!containerRef.current) return;
-        const app = new App(containerRef.current, { items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase });
+        const app = new App(containerRef.current, { items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase, activeScale });
         return () => { app.destroy(); };
-    }, [items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase]);
+    }, [items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase, activeScale]);
     return <div className="circular-gallery" ref={containerRef} />;
 }
 

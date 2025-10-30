@@ -5,11 +5,11 @@ import CircularGallery from "@/components/CircularGallery";
 
 export default function ProjectsPage() {
     const items = [
-        { image: "/carrousel rosh.png", text: "ROSH" },
-        { image: "/carrousel paturain.png", text: "Paturain" },
-        { image: "/carrousel fiori.png", text: "FIORI" },
-        { image: "/carrousel ql.png", text: "Quality Lodgings" },
-        { image: "/carrousel fis.png", text: "FIS" },
+        { image: "/carrousel rosh.png", text: "ROSH", href: "/projects/rosh" },
+        { image: "/carrousel paturain.png", text: "Paturain", href: "/projects/paturain" },
+        { image: "/carrousel fiori.png", text: "FIORI", href: "/projects/fiori" },
+        { image: "/carrousel ql.png", text: "Quality Lodgings", href: "/projects/quality-lodgings" },
+        { image: "/carrousel fis.png", text: "FIS", href: "/projects/fis" },
     ];
 
     return (
@@ -40,7 +40,7 @@ export default function ProjectsPage() {
 
                 {/* Carousel container (fixed height as requested) */}
                 <div style={{ height: '400px', position: 'relative', background: 'rgba(0, 0, 0, 0.3)', borderRadius: '16px', overflow: 'hidden' }}>
-                    <CircularGallery bend={3} textColor="#ffffff" borderRadius={0.12} scrollEase={0.02} items={items} />
+                    <CircularGallery bend={3} textColor="#ffffff" borderRadius={0.12} scrollEase={0.02} activeScale={1.3} items={items} />
                 </div>
             </main>
 
