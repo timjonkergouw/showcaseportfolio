@@ -104,7 +104,7 @@ class Title {
 class Media {
     extra = 0;
     geometry: any; gl: any; image: string; index: number; length: number; renderer: any; scene: any; screen: any; text: string; viewport: any; bend: number; textColor: string; borderRadius: number; font: string;
-    program: any; plane: any; title: any; scale: number; padding: number; width: number; widthTotal: number; x: number; speed: number; isBefore: boolean; isAfter: boolean;
+    program!: any; plane!: any; title!: any; scale!: number; padding!: number; width!: number; widthTotal!: number; x!: number; speed!: number; isBefore!: boolean; isAfter!: boolean;
     constructor({ geometry, gl, image, index, length, renderer, scene, screen, text, viewport, bend, textColor, borderRadius = 0, font }: any) {
         this.geometry = geometry;
         this.gl = gl;
@@ -253,7 +253,8 @@ class Media {
 }
 
 class App {
-    container: HTMLElement; renderer: any; gl: any; camera: any; scene: any; planeGeometry: any; mediasImages: any[]; medias: any[]; screen: any; viewport: any; scroll: any; onCheckDebounce: any; raf: number | undefined; isDown: boolean; start: number; scrollSpeed: number;
+    container!: HTMLElement; renderer!: any; gl!: any; camera!: any; scene!: any; planeGeometry!: any; mediasImages!: any[]; medias!: any[]; screen!: any; viewport!: any; scroll!: any; onCheckDebounce!: any; raf: number | undefined; isDown!: boolean; start!: number; scrollSpeed!: number;
+    boundOnResize!: () => void; boundOnWheel!: (e: any) => void; boundOnTouchDown!: (e: any) => void; boundOnTouchMove!: (e: any) => void; boundOnTouchUp!: () => void;
     constructor(container: HTMLElement, { items, bend, textColor = '#ffffff', borderRadius = 0, font = 'bold 30px Figtree', scrollSpeed = 2, scrollEase = 0.05 }: any = {}) {
         document.documentElement.classList.remove('no-js');
         this.container = container;
