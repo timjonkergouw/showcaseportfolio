@@ -1,4 +1,3 @@
-import PillNav from "@/components/PillNav";
 import DiamondGradient from "@/components/DiamondGradient";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,18 +10,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#1a1a1a] flex flex-col" style={{ position: 'relative' }}>
       <DiamondGradient hex="#9A3CC3" speed={0.35} bandWidth={0.8} aspectY={0.8} aspectX={0.2} softness={2} centerOffsetPx={{ x: 40, y: 0 }} />
-      <PillNav
-        items={[
-          { label: 'Home', href: '/' },
-          { label: 'About', href: '/about' },
-          { label: 'Projects', href: '/projects' }
-        ]}
-        activeHref="/"
-        baseColor="#ffffff"
-        pillColor="#1a1a1a"
-        hoveredPillTextColor="#000000"
-        pillTextColor="#ffffff"
-      />
+
 
       <main className="relative mx-auto max-w-7xl px-6 pt-20 pb-20 md:pt-28">
         <div className="grid grid-cols-1 gap-0 md:gap-0 md:grid-cols-2 md:items-center">
@@ -40,12 +28,12 @@ export default function Home() {
             <DelayedReveal delayMs={4500}>
               <div className="flex items-center gap-3">
                 <Link href="/about" className="inline-block">
-                  <StarBorder as="div" color="#9A3CC3" speed="7s" thickness={2} className="hover:opacity-90 transition-opacity cursor-pointer">
+                  <StarBorder as="div" color="#9A3CC3" speed="7s" thickness={2} className="opacity-70 hover:opacity-90 transition-opacity cursor-pointer">
                     ABOUT
                   </StarBorder>
                 </Link>
                 <Link href="/projects" className="inline-block">
-                  <StarBorder as="div" color="#9A3CC3" speed="7s" thickness={2} className="hover:opacity-90 transition-opacity cursor-pointer">
+                  <StarBorder as="div" color="#9A3CC3" speed="7s" thickness={2} className="opacity-70 hover:opacity-90 transition-opacity cursor-pointer">
                     PROJECTS
                   </StarBorder>
                 </Link>

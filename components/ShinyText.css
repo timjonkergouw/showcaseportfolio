@@ -1,15 +1,13 @@
 .shiny-text {
-  color: white;
-  background: linear-gradient(120deg,
-      rgba(255, 255, 255, 0) 40%,
-      rgba(255, 255, 255, 0.8) 50%,
-      rgba(255, 255, 255, 0) 60%);
-  background-size: 200% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
+  color: #ffffff;
+  background: transparent;
+  -webkit-background-clip: unset;
+  background-clip: unset;
+  -webkit-text-fill-color: #ffffff;
   display: inline-block;
-  animation: shine 5s linear infinite;
+  animation: none;
   transition: color 0.3s ease;
+  font-weight: 900;
 }
 
 @keyframes shine {

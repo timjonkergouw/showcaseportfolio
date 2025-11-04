@@ -15,7 +15,7 @@
   position: absolute;
   width: 300%;
   height: 50%;
-  opacity: 0.7;
+  opacity: 1;
   bottom: -12px;
   right: -250%;
   border-radius: 50%;
@@ -25,7 +25,7 @@
 
 .border-gradient-top {
   position: absolute;
-  opacity: 0.7;
+  opacity: 1;
   width: 300%;
   height: 50%;
   top: -12px;
@@ -37,11 +37,12 @@
 
 .inner-content {
   position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 3px solid rgba(255, 255, 255, 0.3);
   background: #1e1e1e;
   /* lighter dark */
   color: white;
   font-size: 18px;
+  font-weight: 900;
   text-align: center;
   padding: 16px 31px;
   /* 30% larger pill */
@@ -54,7 +55,7 @@
 .inner-content:hover {
   background: white;
   color: #1e1e1e;
-  border-color: rgba(255, 255, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.6);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25);
 }
 

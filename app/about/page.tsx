@@ -1,4 +1,3 @@
-import PillNav from "@/components/PillNav";
 import DiamondGradient from "@/components/DiamondGradient";
 import Image from "next/image";
 import TiltImage from "@/components/TiltImage";
@@ -12,18 +11,7 @@ export default function AboutPage() {
         <div className="min-h-screen bg-[#1a1a1a] flex flex-col" style={{ position: 'relative' }}>
             <DiamondGradient hex="#9A3CC3" speed={0.35} bandWidth={0.8} aspectY={0.8} aspectX={0.2} softness={2} centerOffsetPx={{ x: 40, y: 0 }} />
 
-            <PillNav
-                items={[
-                    { label: 'Home', href: '/' },
-                    { label: 'About', href: '/about' },
-                    { label: 'Projects', href: '/projects' }
-                ]}
-                activeHref="/about"
-                baseColor="#ffffff"
-                pillColor="#1a1a1a"
-                hoveredPillTextColor="#000000"
-                pillTextColor="#ffffff"
-            />
+
 
             <main className="relative mx-auto max-w-7xl px-6 pt-20 pb-20 md:pt-28">
                 {/* Top banner: name + profile image */}
@@ -39,7 +27,7 @@ export default function AboutPage() {
                     <FadeInOnLoad delayMs={300} fromY={6} fromScale={0.98}>
                         <div className="order-1 md:order-2 flex md:justify-end">
                             <TiltImage
-                                src="/tim elipse.png"
+                                src="/voetbal 1.png"
                                 alt="Profile picture of Tim Jonkergouw"
                                 sizes="(max-width: 768px) 20rem, (max-width: 1024px) 25rem, 28rem"
                                 className="relative h-56 w-56 md:h-72 md:w-72 lg:h-90 lg:w-90"
@@ -80,9 +68,9 @@ export default function AboutPage() {
 
                     {/* INTEREST */}
                     <RevealOnScroll>
-                        <section className="text-right ml-auto">
-                            <h2 className="text-5xl md:text-6xl font-black text-white tracking-tight mb-4">INTEREST</h2>
-                            <p className="text-white/90 leading-relaxed max-w-3xl ml-auto">
+                        <section className="ml-auto">
+                            <h2 className="text-5xl md:text-6xl font-black text-white tracking-tight mb-4 text-right">INTEREST</h2>
+                            <p className="text-white/90 leading-relaxed max-w-3xl ml-auto text-justify">
                                 I completed my higher general secondary education (HAVO) and then started studying ICT at Fontys University in Tilburg.
                                 I chose this program because I have always been interested in working with computers and experimenting with programs such as Photoshop and Sony Vegas.
                                 Through this, I discovered that I really enjoy the creative side of things. So, in the second semester, I decided to focus on Media Design, and in the third semester, I started working on Front-End Development to learn more about coding. In the fourth semester, I moved on to Media Creation in Eindhoven, because I have always enjoyed being creative.
